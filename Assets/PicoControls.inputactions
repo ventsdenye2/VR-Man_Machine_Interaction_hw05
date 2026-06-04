@@ -1,0 +1,34 @@
+{
+    "name": "PicoControls",
+    "maps": [
+        {
+            "name": "Move",
+            "id": "e0fd0e52-2586-4683-b5a4-5ee16b0cfe14",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "4b791b05-6147-40fb-a1a8-bd30148e7822",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "eb1170cf-ea34-47ef-86c9-665a20416333",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

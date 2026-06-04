@@ -1,0 +1,88 @@
+# ============================================
+# Unity 项目 .gitignore（完整版）
+# ============================================
+
+# --- Unity 自动生成的目录 ---
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+
+# --- 内存捕捉与性能分析 ---
+*.mdb
+*.apk
+*.aab
+*.unitypackage
+*.app
+
+# --- 崩溃报告 / 符号文件 ---
+/sysinfo.txt
+*.crash
+*.pdb
+
+# --- Unity Connect / Cloud ---
+/.vs/
+/*.csproj
+/*.sln
+/*.unityproj
+/*.booproj
+
+# --- Visual Studio ---
+*.pidb
+*.scc
+*.sln.docstates
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# --- VS Code ---
+.vscode/
+*.code-workspace
+
+# --- JetBrains Rider ---
+.idea/
+*.sln.iml
+
+# --- MonoDevelop / Xamarin ---
+*.pidb
+*.userprefs
+
+# --- macOS ---
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+
+# --- Windows ---
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# --- Linux ---
+*~
+.directory
+
+# --- 缓存 / 临时文件 ---
+*.swp
+*.swo
+*.tmp
+*.bak
+*~
+~*.docx
+\#*\#
+.\#*
+
+# ============================================
+# ⚠️ 重要：Unity 的 .meta 文件必须保留！
+# 以下规则确保 .meta 不被忽略
+# ============================================
+!*.meta
+
