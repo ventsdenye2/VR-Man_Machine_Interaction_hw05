@@ -15,10 +15,15 @@ public class VR_InvectorBridge : MonoBehaviour
     [Tooltip("拖入你的 VR Main Camera。如果不填，默认使用角色自身的正前方")]
     public Transform referenceCamera;
 
+    [Header("VR Stability")]
+    public bool keepUpright = true;
+    public bool disableFallRagdoll = true;
+
     void Start()
     {
         cc = GetComponent<vThirdPersonController>();
         if (cc != null) cc.Init();
+        ApplyVRStabilitySettings();
 
         if (referenceCamera == null && Camera.main != null)
         {
@@ -42,6 +47,7 @@ public class VR_InvectorBridge : MonoBehaviour
         Vector3 invectorInput = new Vector3(currentInput.x, 0f, currentInput.y);
         cc.input = invectorInput;
         cc.ControlKeepDirection();
+        KeepCharacterUpright();
     }
 
     void FixedUpdate()
@@ -57,6 +63,7 @@ public class VR_InvectorBridge : MonoBehaviour
         cc.ControlLocomotionType();
         cc.ControlRotationType();
         cc.UpdateAnimator();
+        KeepCharacterUpright();
     }
 
     void OnAnimatorMove()
@@ -83,5 +90,26 @@ public class VR_InvectorBridge : MonoBehaviour
     public void StopMovement()
     {
         if (!useKeyboardDebug) currentInput = Vector2.zero;
+    }
+
+    void ApplyVRStabilitySettings()
+    {
+        if (cc == null || !disableFallRagdoll)
+            return;
+
+        cc.ragdollVelocity = 0f;
+        cc.fallDamage = 0f;
+    }
+
+    void KeepCharacterUpright()
+    {
+        if (!keepUpright)
+            return;
+
+        var euler = transform.eulerAngles;
+        if (Mathf.Abs(Mathf.DeltaAngle(euler.x, 0f)) < 0.01f && Mathf.Abs(Mathf.DeltaAngle(euler.z, 0f)) < 0.01f)
+            return;
+
+        transform.rotation = Quaternion.Euler(0f, euler.y, 0f);
     }
 }

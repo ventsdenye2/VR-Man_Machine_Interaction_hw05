@@ -32,6 +32,9 @@ public class VRAvatarTeleportBinder : MonoBehaviour
     [Header("Teleport Sync")]
     public bool snapAvatarToXROrigin = true;
     public bool matchAvatarYawToHeadset = true;
+    public bool keepAvatarUpright = true;
+    public bool preserveAvatarHeightDuringSync = true;
+    public bool preserveRigHeightWhenAligningToAvatar = true;
     public float snapPositionThreshold = 0.05f;
     public float avatarYawOffset;
 
@@ -58,11 +61,14 @@ public class VRAvatarTeleportBinder : MonoBehaviour
             return;
 
         var delta = xrOrigin.position - lastRigPosition;
+        delta.y = 0f;
         if (delta.sqrMagnitude >= snapPositionThreshold * snapPositionThreshold)
             SnapAvatarToXROrigin();
 
         if (matchAvatarYawToHeadset)
             MatchAvatarYaw();
+        else if (keepAvatarUpright)
+            KeepAvatarUpright();
 
         lastRigPosition = xrOrigin.position;
     }
@@ -72,7 +78,7 @@ public class VRAvatarTeleportBinder : MonoBehaviour
         if (xrOrigin == null || avatarRoot == null)
             return;
 
-        SetAvatarPose(xrOrigin.position, avatarRoot.rotation);
+        SetAvatarPose(GetHorizontalSyncedPosition(avatarRoot.position, xrOrigin.position, preserveAvatarHeightDuringSync), avatarRoot.rotation);
     }
 
     public void MoveXROriginToAvatar()
@@ -80,7 +86,7 @@ public class VRAvatarTeleportBinder : MonoBehaviour
         if (xrOrigin == null || avatarRoot == null)
             return;
 
-        xrOrigin.position = avatarRoot.position;
+        xrOrigin.position = GetHorizontalSyncedPosition(xrOrigin.position, avatarRoot.position, preserveRigHeightWhenAligningToAvatar);
         lastRigPosition = xrOrigin.position;
     }
 
@@ -181,8 +187,26 @@ public class VRAvatarTeleportBinder : MonoBehaviour
         SetAvatarPose(avatarRoot.position, Quaternion.Euler(euler));
     }
 
+    void KeepAvatarUpright()
+    {
+        if (avatarRoot == null)
+            return;
+
+        var euler = avatarRoot.eulerAngles;
+        if (Mathf.Abs(Mathf.DeltaAngle(euler.x, 0f)) < 0.01f && Mathf.Abs(Mathf.DeltaAngle(euler.z, 0f)) < 0.01f)
+            return;
+
+        SetAvatarPose(avatarRoot.position, Quaternion.Euler(0f, euler.y, 0f));
+    }
+
     void SetAvatarPose(Vector3 position, Quaternion rotation)
     {
+        if (keepAvatarUpright)
+        {
+            var euler = rotation.eulerAngles;
+            rotation = Quaternion.Euler(0f, euler.y, 0f);
+        }
+
         if (avatarCharacterController != null && avatarCharacterController.enabled)
         {
             avatarCharacterController.enabled = false;
@@ -193,6 +217,14 @@ public class VRAvatarTeleportBinder : MonoBehaviour
         {
             avatarRoot.SetPositionAndRotation(position, rotation);
         }
+    }
+
+    Vector3 GetHorizontalSyncedPosition(Vector3 currentPosition, Vector3 sourcePosition, bool preserveHeight = true)
+    {
+        return new Vector3(
+            sourcePosition.x,
+            preserveHeight ? currentPosition.y : sourcePosition.y,
+            sourcePosition.z);
     }
 
     static Transform FindNamedTransform(string objectName)
